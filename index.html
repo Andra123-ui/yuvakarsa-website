@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yuvakarsa — Gen Z Creative Service</title>
+    <meta name="description" content="Karang Taruna Krembangan Utara. Desain, Dokumentasi, & Digitalisasi UMKM.">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --navy: #0B2350;
+            --orange: #F57C00;
+            --bg: #F4F4F0;
+            --black: #111111;
+            --white: #FFFFFF;
+        }
+
+        /* CUSTOM CURSOR */
+        * { cursor: none !important; }
+        @media (max-width: 768px) { * { cursor: auto !important; } }
+
+        .cursor-dot, .cursor-outline {
+            position: fixed; top: 0; left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%; z-index: 9999;
+            pointer-events: none; will-change: transform;
+        }
+        .cursor-dot {
+            width: 8px; height: 8px;
+            background-color: var(--orange);
+            transition: width .2s, height .2s;
+        }
+        .cursor-outline {
+            width: 40px; height: 40px;
+            border: 2px solid var(--orange);
+            transition: width .25s, height .25s, background-color .25s, border-color .25s;
+        }
+        .cursor-outline.hover-effect {
+            width: 70px; height: 70px;
+            background-color: rgba(245, 124, 0, 0.25);
+            border-color: var(--navy);
+        }
+        .cursor-outline.click-effect {
+            width: 20px; height: 20px;
+            background-color: var(--orange);
+        }
+
+        /* SCROLL PROGRESS BAR */
+        #progress-bar {
+            position: fixed; top: 0; left: 0;
+            height: 5px; background: var(--orange);
+            width: 0%; z-index: 10000;
+            transition: width .1s;
+            box-shadow: 0 0 15px var(--orange);
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-track { background: var(--bg); border-left: 3px solid var(--black); }
+        ::-webkit-scrollbar-thumb { background: var(--orange); border: 3px solid var(--black); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--navy); }
+
+        body {
+            background-color: var(--bg);
+            color: var(--black);
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+            background-image:
+                linear-gradient(rgba(17,17,17,.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(17,17,17,.06) 1px, transparent 1px);
+            background-size: 50px 50px;
+            background-position: -1px -1px;
+        }
+
+        /* NOISE OVERLAY */
+        body::after {
+            content: '';
+            position: fixed; inset: 0;
+            pointer-events: none; z-index: 9998;
+            opacity: .04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        /* SCROLL REVEAL */
+        .reveal {
+            opacity: 0;
+            transform: translateY(60px) scale(.98);
+            transition: all .9s cubic-bezier(.19,1,.22,1);
+            will-change: transform, opacity;
+        }
+        .reveal.active { opacity: 1; transform: translateY(0) scale(1); }
+        .delay-1 { transition-delay: .1s; }
+        .delay-2 { transition-delay: .22s; }
+        .delay-3 { transition-delay: .34s; }
+
+        /* BUTTONS */
+        .btn-brutal {
+            background: var(--navy); color: white;
+            font-family: 'Space Mono', monospace;
+            font-weight: 700; font-size: 1rem;
+            padding: 14px 28px;
+            border: 3px solid var(--black);
+            box-shadow: 5px 5px 0 var(--orange);
+            text-decoration: none;
+            display: inline-block;
+            transition: transform .2s, box-shadow .2s, background .2s;
+            border-radius: 0;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-brutal::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,.35) 50%, transparent 70%);
+            transform: translateX(-120%);
+            transition: transform .6s;
+        }
+        .btn-brutal:hover::before { transform: translateX(120%); }
+        .btn-brutal:hover {
+            color: white; background: var(--navy);
+            box-shadow: 2px 2px 0 var(--orange);
+            transform: translate(3px, 3px);
+        }
+        .btn-brutal-orange {
+            background: var(--orange); color: var(--black);
+            box-shadow: 5px 5px 0 var(--black);
+        }
+        .btn-brutal-orange:hover {
+            color: var(--black); background: var(--orange);
+            box-shadow: 2px 2px 0 var(--black);
+            transform: translate(3px, 3px);
+        }
+
+        /* NAVBAR */
+        nav {
+            background: rgba(244, 244, 240, .92);
+            backdrop-filter: blur(12px);
+            border-bottom: 4px solid var(--black);
+            padding: 15px 5%;
+            position: sticky; top: 0; z-index: 999;
+            transition: padding .3s, background .3s;
+        }
+        nav.scrolled { padding: 8px 5%; background: rgba(244, 244, 240, .98); }
+
+                /* CSS LOGO DENGAN KOTAK ORANYE */
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--orange);
+            padding: 8px 16px; /* Memberikan ruang di dalam kotak oranye */
+            border: 3px solid var(--black); /* Border hitam khas brutalist */
+            box-shadow: 3px 3px 0 var(--black); /* Bayangan hitam */
+            transform: rotate(-2deg); /* Efek miring agar tidak kaku */
+            text-decoration: none;
+            transition: transform .3s, box-shadow .3s;
+        }
+        
+        .logo-img {
+            height: 50px; /* Ukuran logo disesuaikan agar pas di dalam kotak */
+            width: 50px; /* Lebar logo disesuaikan agar pas di dalam kotak */
+            display: block;
+            object-fit: contain;
+        }
+
+        .logo:hover {
+            transform: rotate(2deg) scale(1.05);
+            box-shadow: 5px 5px 0 var(--black);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 26px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .nav-links a {
+            text-decoration: none; color: var(--black);
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            font-size: 14px;
+            padding: 6px 10px;
+            position: relative;
+            transition: color .3s;
+            white-space: nowrap;
+        }
+        .nav-links a::after {
+            content: ''; position: absolute;
+            left: 10px; bottom: 0; height: 3px; width: 0;
+            background: var(--orange);
+            transition: width .3s;
+        }
+        .nav-links a:hover::after { width: calc(100% - 20px); }
+        .nav-links a:hover { color: var(--navy); }
+
+        .nav-cta {
+            padding: 9px 18px !important;
+            font-size: 13px !important;
+            box-shadow: 3px 3px 0 var(--black) !important;
+            margin: 0 !important;
+        }
+
+        .nav-toggle {
+            display: none;
+            background: var(--navy);
+            color: white;
+            border: 3px solid var(--black);
+            box-shadow: 3px 3px 0 var(--orange);
+            width: 46px; height: 46px;
+            font-size: 18px;
+            align-items: center; justify-content: center;
+            transition: transform .2s, box-shadow .2s;
+        }
+        .nav-toggle:hover { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--orange); }
+
+        /* Mobile menu panel */
+        .mobile-menu {
+            position: fixed;
+            top: 0; right: 0;
+            height: 100vh;
+            width: min(78vw, 320px);
+            background: var(--bg);
+            border-left: 4px solid var(--black);
+            transform: translateX(105%);
+            transition: transform .35s cubic-bezier(.19,1,.22,1);
+            z-index: 1200;
+            padding: 90px 28px 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            box-shadow: -10px 0 40px rgba(0,0,0,.18);
+        }
+        .mobile-menu.open { transform: translateX(0); }
+        .mobile-menu a {
+            text-decoration: none;
+            color: var(--black);
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            font-size: 18px;
+            padding: 14px 8px;
+            border-bottom: 2px solid rgba(17,17,17,.12);
+            transition: padding-left .2s, color .2s;
+        }
+        .mobile-menu a:hover { padding-left: 16px; color: var(--navy); }
+        .mobile-menu .btn-brutal { margin-top: 18px; text-align: center; }
+        .mobile-menu-close {
+            position: absolute;
+            top: 18px; right: 18px;
+            width: 42px; height: 42px;
+            background: var(--orange);
+            border: 3px solid var(--black);
+            box-shadow: 3px 3px 0 var(--black);
+            font-size: 18px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .menu-backdrop {
+            position: fixed; inset: 0;
+            background: rgba(11,35,80,.45);
+            backdrop-filter: blur(3px);
+            opacity: 0; pointer-events: none;
+            transition: opacity .3s;
+            z-index: 1100;
+        }
+        .menu-backdrop.open { opacity: 1; pointer-events: auto; }
+
+        @media (max-width: 992px) {
+            .nav-links { display: none; }
+            .nav-toggle { display: inline-flex; }
+        }
+
+        /* HERO */
+        .hero-section {
+            position: relative;
+            min-height: calc(100vh - 80px);
+            width: 100%;
+            display: flex; align-items: center;
+            border-bottom: 4px solid var(--black);
+            overflow: hidden;
+            background-color: var(--navy);
+        }
+
+                .hero-bg {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
+            object-fit: cover; /* Memaksa gambar full screen */
+            object-position: center; /* Memotong gambar secara seimbang dari tengah */
+            z-index: 1;
+            filter: grayscale(100%) contrast(1.15);
+            will-change: transform;
+            background-color: var(--navy); 
+        }
+
+        .hero-section picture {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .hero-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(90deg, rgba(11,35,80,.98) 0%, rgba(11,35,80,.85) 40%, rgba(245,124,0,.2) 100%);
+            mix-blend-mode: multiply;
+            z-index: 2;
+        }
+
+        /* SPOTLIGHT EFFECT */
+        .hero-spotlight {
+            position: absolute; inset: 0; z-index: 2;
+            pointer-events: none;
+            background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 50%), rgba(245,124,0,.18), transparent 60%);
+            transition: background .1s;
+        }
+
+        .hero-content {
+            position: relative; z-index: 3;
+            padding: 0 5%; max-width: 680px;
+            text-align: left;
+        }
+
+        .hero-badge {
+            font-family: 'Space Mono', monospace;
+            background: var(--orange); color: var(--black);
+            display: inline-block; padding: 8px 16px;
+            margin-bottom: 25px;
+            border: 2px solid var(--black);
+            box-shadow: 4px 4px 0 var(--black);
+            font-weight: 700; font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transform: rotate(-2deg);
+            animation: floatBadge 3s ease-in-out infinite;
+        }
+        @keyframes floatBadge {
+            0%, 100% { transform: rotate(-2deg) translateY(0); }
+            50% { transform: rotate(-2deg) translateY(-6px); }
+        }
+
+                /* DESAIN TOMBOL BACK TO TOP */
+        #backTop {
+            position: fixed;
+            bottom: 30px;
+            right: 30px; /* Dipindah ke kanan bawah */
+            width: 50px;
+            height: 50px;
+            background: var(--orange);
+            color: var(--black);
+            border: 3px solid var(--black);
+            box-shadow: 4px 4px 0 var(--black);
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 999;
+            
+            /* Efek animasi sembunyi/muncul */
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all .3s cubic-bezier(.19,1,.22,1);
+        }
+
+        /* Muncul saat di-scroll */
+        #backTop.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* Efek saat di-hover (ditekan) */
+        #backTop:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 var(--black);
+            background: var(--navy);
+            color: white;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            line-height: .95;
+            text-transform: uppercase;
+            color: white;
+            text-shadow: 4px 4px 0 var(--navy), 6px 6px 0 var(--black);
+            letter-spacing: -2px;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+        .hero-content h1 span {
+            color: var(--orange);
+            -webkit-text-stroke: 1.5px var(--black);
+            text-shadow: 4px 4px 0 white, 6px 6px 0 var(--black);
+            display: inline-block;
+            animation: pulseWord 4s ease-in-out infinite;
+        }
+        @keyframes pulseWord {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        .hero-content p {
+            font-size: clamp(.95rem, 1.2vw, 1.1rem);
+            font-weight: 500;
+            background: white;
+            padding: 20px 25px;
+            border-left: 8px solid var(--orange);
+            border-top: 3px solid var(--black);
+            border-right: 3px solid var(--black);
+            border-bottom: 3px solid var(--black);
+            box-shadow: 6px 6px 0 var(--black);
+            margin-bottom: 35px;
+            max-width: 500px;
+            color: var(--black);
+            line-height: 1.6;
+            position: relative;
+        }
+
+                /* MARQUEE */
+        .marquee-container {
+            overflow: hidden;
+            background: var(--black);
+            color: var(--white);
+            padding: 18px 0;
+            border-bottom: 4px solid var(--black);
+            white-space: nowrap;
+            font-family: 'Space Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+        }
+        .marquee-content {
+            display: flex;
+            flex-shrink: 0;
+            animation: marquee 22s linear infinite;
+            will-change: transform;
+        }
+        .marquee-group {
+            display: flex;
+            flex-shrink: 0;
+        }
+        .marquee-container:hover .marquee-content { animation-play-state: paused; }
+        .marquee-item { display: flex; align-items: center; margin: 0 22px; }
+        .marquee-item i { margin: 0 15px; color: var(--orange); }
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* SECTION TITLE */
+        .section-title {
+            font-size: 2.5rem;
+            font-family: 'Space Mono', monospace;
+            margin-bottom: 30px;
+            background: var(--orange);
+            display: inline-block;
+            padding: 8px 22px;
+            border: 3px solid var(--black);
+            transform: rotate(-1deg);
+            color: var(--black);
+            box-shadow: 5px 5px 0 var(--black);
+            transition: transform .3s;
+        }
+        .section-title:hover { transform: rotate(1deg) scale(1.02); }
+
+        /* ABOUT */
+        .about {
+            padding: 100px 5%;
+            border-bottom: 4px solid var(--black);
+            background: var(--bg);
+            position: relative;
+        }
+        .about-text p {
+            font-size: 1.1rem; line-height: 1.7;
+            margin-bottom: 20px; font-weight: 500;
+        }
+        .stat-box {
+            background: white;
+            border: 4px solid var(--black);
+            padding: 25px;
+            box-shadow: 6px 6px 0 var(--black);
+            text-align: center;
+            transition: transform .3s, box-shadow .3s;
+        }
+        .stat-box:hover { transform: translateY(-6px); box-shadow: 9px 9px 0 var(--orange); }
+        .stat-box h3 {
+            font-size: 3rem; color: var(--navy);
+            font-family: 'Space Mono', monospace;
+            margin-bottom: 0; font-weight: 700;
+        }
+        .stat-box p { font-weight: 700; text-transform: uppercase; margin-bottom: 0; font-size: 14px; }
+
+        /* SERVICES */
+        .services {
+            padding: 100px 5%;
+            border-bottom: 4px solid var(--black);
+            background: white;
+        }
+        .services-sub { max-width: 640px; margin: 0 auto; font-size: 1.05rem; }
+        .card-service {
+            border: 4px solid var(--black);
+            padding: 28px;
+            box-shadow: 8px 8px 0 var(--black);
+            transition: transform .3s cubic-bezier(.175,.885,.32,1.275), box-shadow .3s;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-service:nth-child(1) { background: var(--orange); }
+        .card-service:nth-child(2) { background: var(--navy); color: white; }
+        .card-service:nth-child(3) { background: var(--bg); }
+        .card-service:hover {
+            transform: translate(-8px, -8px);
+            box-shadow: 16px 16px 0 var(--black);
+        }
+        .service-img {
+            position: relative;
+            margin: -28px -28px 22px;
+            height: 180px;
+            overflow: hidden;
+            border-bottom: 4px solid var(--black);
+        }
+        .service-img img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%) contrast(1.1);
+            transition: filter .4s, transform .6s;
+        }
+        .card-service:hover .service-img img { filter: grayscale(0%); transform: scale(1.08); }
+        .service-tag {
+            position: absolute; top: 10px; right: 10px;
+            background: var(--black); color: var(--orange);
+            font-family: 'Space Mono', monospace;
+            font-size: 12px; font-weight: 700;
+            padding: 5px 10px;
+            border: 2px solid var(--orange);
+            z-index: 2;
+        }
+        .card-service i {
+            font-size: 2.8rem; margin-bottom: 18px;
+            color: var(--black); transition: transform .3s;
+            display: inline-block;
+        }
+        .card-service:nth-child(2) i { color: var(--orange); }
+        .card-service:hover i { transform: scale(1.15) rotate(8deg); }
+        .card-service h3 {
+            font-size: 1.55rem; margin-bottom: 15px;
+            font-family: 'Space Mono', monospace;
+            border-bottom: 4px solid var(--black);
+            padding-bottom: 10px;
+        }
+        .card-service:nth-child(2) h3 { border-color: white; }
+        .card-service p { font-weight: 500; line-height: 1.6; margin-bottom: 15px; font-size: .98rem; }
+        .service-list { list-style: none; padding: 0; margin: 0; font-family: 'Space Mono', monospace; font-size: 13px; }
+        .service-list li { padding: 5px 0; display: flex; align-items: center; gap: 8px; }
+        .service-list i { font-size: 12px !important; margin: 0 !important; padding: 3px; background: var(--black); color: var(--orange); border-radius: 50%; width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; }
+        .card-service:nth-child(2) .service-list i { background: var(--orange); color: var(--black); }
+
+        /* PORTFOLIO BENTO */
+        .portfolio {
+            padding: 100px 5%;
+            border-bottom: 4px solid var(--black);
+            background: var(--bg);
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: 220px;
+            gap: 20px;
+        }
+        .bento-item {
+            border: 4px solid var(--black);
+            box-shadow: 6px 6px 0 var(--black);
+            overflow: hidden;
+            position: relative;
+            background: #ddd;
+            transition: transform .3s, box-shadow .3s;
+        }
+        .bento-item::after {
+            content: '\f00e';
+            font-family: 'Font Awesome 6 Free'; font-weight: 900;
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 2.5rem; color: white;
+            background: rgba(11,35,80,.85);
+            width: 80px; height: 80px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%;
+            border: 3px solid var(--orange);
+            transition: transform .3s;
+            z-index: 2;
+        }
+        .bento-item:hover::after { transform: translate(-50%, -50%) scale(1); }
+        .bento-item:hover {
+            transform: scale(1.02);
+            box-shadow: 8px 8px 0 var(--orange);
+            z-index: 10;
+        }
+        .bento-item img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transition: transform .6s ease, filter .4s;
+            filter: grayscale(60%);
+        }
+        .bento-item:hover img { transform: scale(1.12); filter: grayscale(0%); }
+        .bento-item:nth-child(1) { grid-column: span 2; grid-row: span 2; }
+        .bento-item:nth-child(2) { grid-column: span 2; grid-row: span 1; }
+        .bento-item:nth-child(3) { grid-column: span 1; grid-row: span 1; }
+        .bento-item:nth-child(4) { grid-column: span 1; grid-row: span 1; }
+
+        /* TEAM */
+        .team {
+            padding: 100px 5%;
+            border-bottom: 4px solid var(--black);
+            background: var(--orange);
+        }
+        .team-card {
+            background: white;
+            border: 4px solid var(--black);
+            box-shadow: 6px 6px 0 var(--black);
+            text-align: center;
+            padding-bottom: 20px;
+            transition: transform .35s, box-shadow .35s;
+            position: relative;
+            overflow: hidden;
+        }
+        .team-card::before {
+            content: ''; position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(245,124,0,.25), transparent);
+            transition: left .6s;
+            z-index: 3; pointer-events: none;
+        }
+        .team-card:hover::before { left: 100%; }
+        .team-card:hover {
+            transform: translateY(-12px) rotate(-1deg);
+            box-shadow: 10px 10px 0 var(--black);
+        }
+        .team-img {
+            width: 100%; height: 200px;
+            background: var(--navy);
+            border-bottom: 4px solid var(--black);
+            object-fit: cover;
+            filter: grayscale(100%);
+            transition: filter .35s, transform .5s;
+        }
+        .team-card:hover .team-img { filter: grayscale(0%); transform: scale(1.05); }
+        .team-card h4 {
+            font-size: 1.3rem; margin-top: 20px;
+            font-family: 'Space Mono', monospace; font-weight: 700;
+        }
+        .team-card p {
+            font-weight: 700; color: white;
+            background: var(--navy);
+            display: inline-block;
+            padding: 4px 12px;
+            border: 2px solid var(--black);
+            margin-top: 5px;
+            font-size: 14px;
+            transform: rotate(-2deg);
+        }
+
+        /* TEAM MEMBERS GRID */
+        .team-members {
+            margin-top: 60px;
+            background: rgba(255, 255, 255, 0.55);
+            border: 3px dashed var(--black);
+            padding: 30px;
+            position: relative;
+        }
+        .members-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 16px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--navy);
+            border-bottom: 3px solid var(--navy);
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+            display: inline-block;
+            font-weight: 700;
+        }
+        .members-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px 30px;
+        }
+        .member-item {
+            display: flex;
+            flex-direction: column;
+            font-size: 14px;
+            line-height: 1.4;
+            padding: 8px 0;
+            border-bottom: 2px solid rgba(17, 17, 17, 0.1);
+        }
+        .member-role {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--navy);
+            letter-spacing: .5px;
+            margin-bottom: 3px;
+            font-weight: 700;
+        }
+        .member-name {
+            font-weight: 700;
+            color: var(--black);
+            font-size: 16px;
+        }
+
+        /* FOOTER */
+        .footer {
+            padding: 100px 5% 40px;
+            background: var(--navy);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .footer::before {
+            content: 'YUVAKARSA';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20vw; font-weight: 700;
+            color: rgba(255,255,255,.03);
+            white-space: nowrap; z-index: 0;
+            font-family: 'Space Mono', monospace;
+            pointer-events: none;
+        }
+        .footer h2 {
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            color: var(--orange);
+            text-shadow: 4px 4px 0 var(--black);
+            font-family: 'Space Mono', monospace;
+            position: relative; z-index: 1;
+        }
+        .footer p { margin-bottom: 40px; font-size: 1.15rem; position: relative; z-index: 1; opacity: .92; }
+        .footer-bottom {
+            margin-top: 80px;
+            border-top: 2px dashed rgba(255,255,255,.2);
+            padding-top: 20px;
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            position: relative; z-index: 1;
+            opacity: .8;
+        }
+
+                /* =========================================
+           RESPONSIVE UNTUK SEMUA DEVICE (HP & TABLET)
+           ========================================= */
+        
+        /* 1. Tablet & Layar Sedang */
+        @media (max-width: 992px) {
+            .nav-links { display: none; }
+            .nav-toggle { display: inline-flex; }
+            
+            .hero-content h1 { font-size: 3.5rem; }
+            .about, .services, .portfolio, .team, .footer {
+                padding: 80px 5%;
+            }
+        }
+
+        /* 2. HP (Mobile) */
+        @media (max-width: 768px) {
+            /* Kursor dimatikan di HP */
+            .cursor-dot, .cursor-outline { display: none !important; }
+            
+            /* --- NAVBAR & LOGO --- */
+            nav { padding: 10px 4%; }
+            .logo { padding: 6px 12px; transform: rotate(-1deg); box-shadow: 2px 2px 0 var(--black); }
+            .logo-img { height: 35px; width: 35px; }
+            .nav-cta { display: none !important; } /* Sembunyikan tombol hubungi di navbar */
+            .nav-toggle { width: 42px; height: 42px; font-size: 16px; box-shadow: 2px 2px 0 var(--orange); }
+            .nav-right { gap: 0; }
+
+            /* --- HERO SECTION --- */
+                        /* --- HERO SECTION --- */
+            .hero-section {
+                min-height: 100vh;
+                padding: 100px 5% 60px !important; /* Padding atas diperkecil agar teks naik */
+                display: flex !important;
+                align-items: flex-start !important; /* KUNCI: Memaksa teks menempel ke ATAS, bukan di tengah */
+                justify-content: center;
+                text-align: center;
+            }
+            
+            .hero-bg { 
+                object-fit: cover !important; 
+                object-position: center !important; 
+                opacity: 0.8 !important; 
+            }
+
+            .hero-overlay {
+                background: linear-gradient(180deg, rgba(11,35,80,0.7) 0%, rgba(11,35,80,0.9) 100%) !important;
+            }
+            
+            .hero-content { 
+                padding: 0; 
+                display: flex; 
+                flex-direction: column; 
+                align-items: center;
+                margin-top: 0; 
+            }
+            
+            .hero-badge { font-size: 11px; margin-bottom: 20px; padding: 6px 12px; }
+            
+            .hero-content h1 {
+                font-size: clamp(2.2rem, 8vw, 2.8rem);
+                text-shadow: 3px 3px 0 var(--navy), 5px 5px 0 var(--black);
+                margin-bottom: 20px;
+            }
+            .hero-content h1 span {
+                text-shadow: 3px 3px 0 white, 5px 5px 0 var(--black);
+            }
+            
+            .hero-content p {
+                font-size: 0.95rem;
+                padding: 15px 20px;
+                margin-bottom: 30px;
+                text-align: left;
+                border-left: 6px solid var(--orange);
+                box-shadow: 4px 4px 0 var(--black);
+            }
+            
+            .btn-brutal { font-size: 0.9rem; padding: 12px 24px; }
+
+            /* --- MARQUEE --- */
+            .marquee-container { font-size: 1.1rem; padding: 12px 0; }
+            .marquee-item { margin: 0 12px; }
+
+            /* --- SECTION TITLES & ABOUT --- */
+            .section-title { font-size: 1.6rem; padding: 6px 16px; margin-bottom: 20px; }
+            .about { padding: 60px 5%; }
+            .about-text p { font-size: 1rem; text-align: center; }
+            .stat-box { padding: 15px 10px; }
+            .stat-box h3 { font-size: 2.2rem; }
+            .stat-box p { font-size: 12px; }
+
+            /* --- SERVICES (LAYANAN) --- */
+            .services { padding: 60px 5%; }
+            .services-sub { font-size: 0.95rem; padding: 0 10px; }
+            .card-service { padding: 20px; margin-bottom: 20px; }
+            .service-img { margin: -20px -20px 15px; height: 160px; }
+            .card-service h3 { font-size: 1.3rem; }
+
+            /* --- PORTFOLIO (KARYA) --- */
+            .portfolio { padding: 60px 5%; }
+
+            /* --- TEAM (TIM KAMI) --- */
+            .team { padding: 60px 5%; }
+            .team-card { padding-bottom: 15px; }
+            .team .team-card .team-img { height: 150px; }
+            .team-card h4 { font-size: 1.1rem; margin-top: 15px; }
+            .team-card p { font-size: 12px; padding: 3px 10px; }
+            
+            /* Struktur Tim (Grid jadi 1 kolom di HP agar nama panjang tidak terpotong) */
+            .team-members { margin-top: 30px; padding: 20px 15px; border-width: 2px; }
+            .members-title { font-size: 14px; }
+            .members-grid { grid-template-columns: 1fr; gap: 10px; }
+            .member-item { padding: 6px 0; }
+            .member-name { font-size: 15px; }
+
+            /* --- FOOTER --- */
+            .footer { padding: 60px 5% 30px; }
+            .footer h2 { font-size: 2rem; text-shadow: 3px 3px 0 var(--black); }
+            .footer p { font-size: 0.95rem; margin-bottom: 30px; }
+            .footer-bottom { margin-top: 40px; font-size: 12px; }
+            .footer::before { font-size: 30vw; } /* Teks latar belakang footer diperbesar */
+
+            /* --- PORTFOLIO (KARYA KAMI) JADI KOTAK 2x2 --- */
+            .portfolio { padding: 60px 5%; }
+            .bento-grid { 
+                grid-template-columns: repeat(2, 1fr) !important; 
+                grid-auto-rows: 140px !important; 
+                gap: 12px !important; 
+            }
+            .bento-item { 
+                grid-column: span 1 !important; 
+                grid-row: span 1 !important; 
+                box-shadow: 4px 4px 0 var(--black) !important; 
+                border-width: 3px !important;
+            }
+            .bento-item::after { width: 50px; height: 50px; font-size: 1.5rem; }
+        }
+
+        /* 3. HP Layar Sangat Kecil (di bawah 400px) */
+        @media (max-width: 400px) {
+            .hero-content h1 { font-size: 2rem; }
+            .section-title { font-size: 1.4rem; }
+            .logo-img { height: 28px; width: 28px; }
+        }
+        
+   </style>
+</head>
+<body>
+
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-outline" id="cursor-outline"></div>
+    <div id="progress-bar"></div>
+
+    <!-- NAVBAR -->
+    <nav class="d-flex justify-content-between align-items-center" id="navbar">
+        <a href="#" class="logo" aria-label="Yuvakarsa">
+            <img src="logo.png" alt="Logo Yuvakarsa" class="logo-img">
+        </a>
+
+        <div class="nav-right">
+            <div class="nav-links">
+                <a href="#tentang">Tentang</a>
+                <a href="#layanan">Layanan</a>
+                <a href="#portofolio">Portofolio</a>
+                <a href="#tim">Tim</a>
+            </div>
+            <a href="#kontak" class="btn-brutal btn-brutal-orange nav-cta" data-cursor="hover">Hubungi</a>
+            <button class="nav-toggle" id="navToggle" aria-label="Buka menu" aria-expanded="false">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- MOBILE MENU -->
+    <div class="menu-backdrop" id="menuBackdrop"></div>
+    <aside class="mobile-menu" id="mobileMenu" aria-hidden="true">
+        <button class="mobile-menu-close" id="menuClose" aria-label="Tutup menu">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <a href="#tentang">Tentang</a>
+        <a href="#layanan">Layanan</a>
+        <a href="#portofolio">Portofolio</a>
+        <a href="#tim">Tim</a>
+        <a href="#kontak" class="btn-brutal btn-brutal-orange">Hubungi <i class="fa-solid fa-arrow-right ms-1"></i></a>
+    </aside>
+
+    <!-- HERO -->
+    <header class="hero-section" id="hero">
+        <picture>
+            <!-- Untuk layar HP (lebar maksimal 768px) -->
+            <source media="(max-width: 768px)" srcset="hero1.png">
+            <!-- Untuk layar Desktop / Laptop -->
+            <img src="hero.png" alt="Tim Yuvakarsa" class="hero-bg" id="hero-bg">
+        </picture>
+        
+        <div class="hero-overlay"></div>
+        <div class="hero-spotlight" id="hero-spotlight"></div>
+
+        <div class="hero-content">
+            <div class="hero-badge reveal">
+                <i class="fa-solid fa-location-dot me-2"></i>Krembangan Utara, Surabaya
+            </div>
+            <h1 class="reveal delay-1">
+                <span class="scramble">GEN Z</span><br>
+                <span>CREATIVE</span><br>
+                SERVICE
+            </h1>
+            <p class="reveal delay-2">Bukan sekadar Karang Taruna biasa. Kami adalah wadah pemuda untuk <b>Desain, Dokumentasi, & Digitalisasi UMKM</b> warga. Aktif, Kreatif, Inovatif!</p>
+            <a href="#layanan" class="btn-brutal btn-brutal-orange reveal delay-3" data-cursor="hover">Gaskeun Lihat Layanan <i class="fa-solid fa-rocket ms-2"></i></a>
+        </div>
+    </header>
+
+        <!-- MARQUEE -->
+    <div class="marquee-container">
+        <div class="marquee-content">
+            <!-- Grup 1 -->
+            <div class="marquee-group">
+                <div class="marquee-item"><i class="fa-solid fa-bolt"></i> DESAIN GRAFIS <i class="fa-solid fa-bolt"></i></div>
+                <div class="marquee-item"><i class="fa-solid fa-camera"></i> FOTO PRODUK <i class="fa-solid fa-camera"></i></div>
+                <div class="marquee-item"><i class="fa-solid fa-video"></i> VIDEO REELS <i class="fa-solid fa-video"></i></div>
+                <div class="marquee-item"><i class="fa-solid fa-briefcase"></i> BRANDING UMKM <i class="fa-solid fa-briefcase"></i></div>
+            </div>
+            <!-- Grup 2 (duplikat persis, untuk loop mulus) -->
+            <div class="marquee-group" aria-hidden="true">
+                <div class="marquee-item"><i class="fa-solid fa-bolt"></i> DESAIN GRAFIS <i class="fa-solid fa-bolt"></i></div>
+                <div class="marquee-item"><i class="fa-solid fa-camera"></i> FOTO PRODUK <i class="fa-solid fa-camera"></i></div>
+                <div class="marquee-item"><i class="fa-solid fa-video"></i> VIDEO REELS <i class="fa-solid fa-video"></i></div>
+                <div class="marquee-item"><i class="fa-solid fa-briefcase"></i> BRANDING UMKM <i class="fa-solid fa-briefcase"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ABOUT -->
+    <section class="about" id="tentang">
+        <div class="container-fluid">
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-6 about-text reveal">
+                    <h2 class="section-title">TENTANG KAMI</h2>
+                    <p><b>Yuvakarsa (Gen Z Creative Service)</b> adalah langkah nyata Karang Taruna Krembangan Utara untuk bangkit dan berkarya. Kami hadir bukan cuma buat rapat atau kegiatan seremonial, tapi buat bikin dampak nyata.</p>
+                    <p>Kami memanfaatkan <i>skill</i> anak muda di bidang desain, foto, video, dan media sosial untuk membantu warga dan pelaku UMKM di sekitar agar bisa ikut <i>go digital</i> dan naik kelas. Ini wadah buat pemuda berkreasi, berkolaborasi, dan mandiri secara finansial.</p>
+                </div>
+                <div class="col-lg-6">
+                    <div class="row g-4">
+                        <div class="col-6 reveal delay-1"><div class="stat-box"><h3 data-count="3" data-suffix="">0</h3><p>Bidang Layanan</p></div></div>
+                        <div class="col-6 reveal delay-2"><div class="stat-box"><h3 data-count="11" data-suffix="">0</h3><p>Anggota Aktif</p></div></div>
+                        <div class="col-6 reveal delay-3"><div class="stat-box"><h3 data-count="100" data-suffix="%">0</h3><p>Karya Pemuda</p></div></div>
+                        <div class="col-6 reveal delay-3"><div class="stat-box"><h3>UMKM</h3><p>Fokus Pemberdayaan</p></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section class="services" id="layanan">
+        <div class="container-fluid">
+            <div class="text-center mb-5 reveal">
+                <h2 class="section-title">MAU BISNIS / ACARA KAMU NAIK KELAS?</h2>
+                <p class="services-sub reveal delay-1 mt-3">Pilih layanan, kirim brief, tim kami langsung eksekusi. <b>Fast response, revisi jelas, harga transparan.</b></p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4 reveal delay-1">
+                    <div class="card-service tilt" data-cursor="hover">
+                        <div class="service-img">
+                            <img src="https://images.unsplash.com/photo-1626785774573-4b799315345d?q=80&w=800&auto=format&fit=crop" alt="Contoh desain grafis poster & feed IG">
+                            <span class="service-tag">Mulai 50K</span>
+                        </div>
+                        <i class="fa-solid fa-palette"></i>
+                        <h3>CREATIVE DESIGN</h3>
+                        <p><b>Cocok buat:</b> UMKM, komunitas, dan acara warga yang butuh identitas visual. <b>Kamu dapat:</b> poster, feed IG, logo, sampai desain baju — siap pakai, aesthetic, dan on-trend.</p>
+                        <ul class="service-list">
+                            <li><i class="fa-solid fa-check"></i> Revisi 2x, file siap cetak</li>
+                            <li><i class="fa-solid fa-check"></i> Pengerjaan 1–3 hari</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4 reveal delay-2">
+                    <div class="card-service tilt" data-cursor="hover">
+                        <div class="service-img">
+                            <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=800&auto=format&fit=crop" alt="Contoh dokumentasi foto & video acara">
+                            <span class="service-tag">Mulai 150K</span>
+                        </div>
+                        <i class="fa-solid fa-photo-film"></i>
+                        <h3>DOKUMENTER</h3>
+                        <p><b>Cocok buat:</b> acara warga, pernikahan, launching produk, sampai konten harian UMKM. <b>Kamu dapat:</b> foto & video profesional, editing warna, sampai video reels siap upload.</p>
+                        <ul class="service-list">
+                            <li><i class="fa-solid fa-check"></i> Foto + video, edit full color</li>
+                            <li><i class="fa-solid fa-check"></i> File via Google Drive</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4 reveal delay-3">
+                    <div class="card-service tilt" data-cursor="hover">
+                        <div class="service-img">
+                            <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=800&auto=format&fit=crop" alt="Contoh digitalisasi UMKM dan media sosial">
+                            <span class="service-tag">Mulai 100K</span>
+                        </div>
+                        <i class="fa-solid fa-mobile-screen-button"></i>
+                        <h3>DIGITALISASI UMKM</h3>
+                        <p><b>Cocok buat:</b> UMKM yang mau eksis di dunia digital tapi bingung mulai dari mana. <b>Kamu dapat:</b> setup sosial media, katalog produk, sampai konten planner bulanan.</p>
+                        <ul class="service-list">
+                            <li><i class="fa-solid fa-check"></i> Setup IG/TikTok + bio link</li>
+                            <li><i class="fa-solid fa-check"></i> Konten planner 1 bulan</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PORTFOLIO BENTO -->
+    <section class="portfolio" id="portofolio">
+        <div class="container-fluid">
+            <div class="text-center mb-5 reveal">
+                <h2 class="section-title">KARYA KAMI</h2>
+                <p class="services-sub reveal delay-1 mt-3">Beberapa hasil karya tim Yuvakarsa. <b>Dari pemuda, untuk warga.</b></p>
+            </div>
+            <div class="bento-grid">
+                <div class="bento-item reveal" data-cursor="hover">
+                    <img src="https://images.unsplash.com/photo-1626785774573-4b799315345d?q=80&w=1000&auto=format&fit=crop" alt="Desain poster UMKM">
+                </div>
+                <div class="bento-item reveal delay-1" data-cursor="hover">
+                    <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=1000&auto=format&fit=crop" alt="Dokumentasi acara warga">
+                </div>
+                <div class="bento-item reveal delay-2" data-cursor="hover">
+                    <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000&auto=format&fit=crop" alt="Digitalisasi UMKM">
+                </div>
+                <div class="bento-item reveal delay-3" data-cursor="hover">
+                    <img src="https://images.unsplash.com/photo-1558655146-9f40138edfeb?q=80&w=1000&auto=format&fit=crop" alt="Branding produk">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TEAM -->
+    <section class="team" id="tim">
+        <div class="container-fluid">
+            <div class="text-center mb-5 reveal">
+                <h2 class="section-title">TIM KAMI</h2>
+                <p class="services-sub reveal delay-1 mt-3">Orang-orang di balik layar. <b>Muda, berani, dan siap eksekusi.</b></p>
+            </div>
+            <div class="row g-4 justify-content-center">
+                <!-- Ketua -->
+                <div class="col-6 col-md-3 reveal delay-1">
+                    <div class="team-card">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=600&auto=format&fit=crop" alt="Ketua Yuvakarsa" class="team-img">
+                        <h4>Iqbal</h4>
+                        <p>Ketua</p>
+                    </div>
+                </div>
+                <!-- Wakil -->
+                <div class="col-6 col-md-3 reveal delay-2">
+                    <div class="team-card">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=600&auto=format&fit=crop" alt="Wakil Yuvakarsa" class="team-img">
+                        <h4>Diandra</h4>
+                        <p>Wakil Ketua</p>
+                    </div>
+                </div>
+                <!-- Sekretaris -->
+                <div class="col-6 col-md-3 reveal delay-3">
+                    <div class="team-card">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=600&auto=format&fit=crop" alt="Sekretaris Yuvakarsa" class="team-img">
+                        <h4>Dania</h4>
+                        <p>Sekretaris</p>
+                    </div>
+                </div>
+                <!-- Bendahara -->
+                <div class="col-6 col-md-3 reveal delay-3">
+                    <div class="team-card">
+                        <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=600&auto=format&fit=crop" alt="Bendahara Yuvakarsa" class="team-img">
+                        <h4>Egar</h4>
+                        <p>Bendahara</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STRUKTUR TIM LENGKAP -->
+            <div class="team-members reveal delay-3">
+                <h3 class="members-title">STRUKTUR TIM YUVAKARSA</h3>
+                <div class="members-grid">
+                    <!-- Pengurus Inti -->
+                    <div class="member-item">
+                        <span class="member-role">Ketua</span>
+                        <span class="member-name">Iqbal Nailil Safa Rahagi</span>
+                    </div>
+                    <div class="member-item">
+                        <span class="member-role">Wakil</span>
+                        <span class="member-name">Diandra</span>
+                    </div>
+                    <div class="member-item">
+                        <span class="member-role">Sekretaris</span>
+                        <span class="member-name">Dania Putri Hendianti</span>
+                    </div>
+                    <div class="member-item">
+                        <span class="member-role">Bendahara</span>
+                        <span class="member-name">Egar</span>
+                    </div>
+
+                    <!-- Divisi 1: Fotografi -->
+                    <div class="member-item">
+                        <span class="member-role">Divisi Fotografi</span>
+                        <span class="member-name">Dicky</span>
+                    </div>
+                    <div class="member-item">
+                        <span class="member-role">Divisi Fotografi</span>
+                        <span class="member-name">Dania</span>
+                    </div>
+
+                    <!-- Divisi 2: Desain Grafis -->
+                    <div class="member-item">
+                        <span class="member-role">Divisi Desain Grafis</span>
+                        <span class="member-name">Rama</span>
+                    </div>
+                    <div class="member-item">
+                        <span class="member-role">Divisi Desain Grafis</span>
+                        <span class="member-name">Nabil M</span>
+                    </div>
+
+                    <!-- Divisi 3: Bisnis Digital -->
+                    <div class="member-item">
+                        <span class="member-role">Divisi Bisnis Digital</span>
+                        <span class="member-name">Diandra</span>
+                    </div>
+                    <div class="member-item">
+                        <span class="member-role">Divisi Bisnis Digital</span>
+                        <span class="member-name">Nabil A</span>
+                    </div>
+                    <div class="member-item">
+                        <span class="member-role">Divisi Bisnis Digital</span>
+                        <span class="member-name">Syaif</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER (TERPISAH: HANYA CTA + COPYRIGHT) -->
+    <footer class="footer" id="kontak">
+        <h2 class="reveal">SIAP NAIK KELAS?</h2>
+        <p class="reveal delay-1">Kirim brief kamu sekarang. Tim Yuvakarsa siap bantu eksekusi.</p>
+        <a href="https://wa.me/6281233488498" target="_blank" rel="noopener" class="btn-brutal btn-brutal-orange reveal delay-2" data-cursor="hover">
+            <i class="fa-brands fa-whatsapp me-2"></i>Chat via WhatsApp
+        </a>
+
+        <div class="footer-bottom">
+            &copy; 2026 Yuvakarsa — Karang Taruna Krembangan Utara. Dibuat dengan <i class="fa-solid fa-heart" style="color: var(--orange);"></i> oleh pemuda.
+        </div>
+    </footer>
+
+    <!-- BACK TO TOP -->
+    <button id="backTop" aria-label="Kembali ke atas"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    (function () {
+        'use strict';
+
+        /* ============ CUSTOM CURSOR ============ */
+        const dot = document.getElementById('cursor-dot');
+        const outline = document.getElementById('cursor-outline');
+        let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+        let outlineX = mouseX, outlineY = mouseY;
+        const isTouch = window.matchMedia('(pointer: coarse)').matches;
+
+        if (!isTouch && dot && outline) {
+            window.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                dot.style.left = mouseX + 'px';
+                dot.style.top = mouseY + 'px';
+            });
+
+            function animateCursor() {
+                outlineX += (mouseX - outlineX) * 0.15;
+                outlineY += (mouseY - outlineY) * 0.15;
+                outline.style.left = outlineX + 'px';
+                outline.style.top = outlineY + 'px';
+                requestAnimationFrame(animateCursor);
+            }
+            animateCursor();
+
+            const hoverTargets = document.querySelectorAll('a, button, [data-cursor="hover"], .bento-item, .card-service, .team-card');
+            hoverTargets.forEach(el => {
+                el.addEventListener('mouseenter', () => outline.classList.add('hover-effect'));
+                el.addEventListener('mouseleave', () => outline.classList.remove('hover-effect'));
+            });
+
+            window.addEventListener('mousedown', () => outline.classList.add('click-effect'));
+            window.addEventListener('mouseup', () => outline.classList.remove('click-effect'));
+        }
+
+        /* ============ SCROLL PROGRESS BAR ============ */
+        const progressBar = document.getElementById('progress-bar');
+        function updateProgress() {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+            progressBar.style.width = progress + '%';
+        }
+        window.addEventListener('scroll', updateProgress, { passive: true });
+        updateProgress();
+
+        /* ============ NAVBAR SCROLLED STATE ============ */
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 60) navbar.classList.add('scrolled');
+            else navbar.classList.remove('scrolled');
+        }, { passive: true });
+
+        /* ============ SCROLL REVEAL ============ */
+        const revealEls = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+        revealEls.forEach(el => revealObserver.observe(el));
+
+        /* ============ HERO SPOTLIGHT ============ */
+        const hero = document.getElementById('hero');
+        const spotlight = document.getElementById('hero-spotlight');
+        if (hero && spotlight && !isTouch) {
+            hero.addEventListener('mousemove', (e) => {
+                const rect = hero.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                spotlight.style.setProperty('--mx', x + '%');
+                spotlight.style.setProperty('--my', y + '%');
+            });
+        }
+
+        /* ============ HERO PARALLAX ============ */
+        const heroBg = document.getElementById('hero-bg');
+        window.addEventListener('scroll', () => {
+            if (heroBg && window.scrollY < window.innerHeight) {
+                heroBg.style.transform = 'translateY(' + (window.scrollY * 0.35) + 'px) scale(1.05)';
+            }
+        }, { passive: true });
+
+        /* ============ TEXT SCRAMBLE ============ */
+        class TextScramble {
+            constructor(el) {
+                this.el = el;
+                this.chars = '!<>-_\\/[]{}—=+*^?#________';
+                this.update = this.update.bind(this);
+            }
+            setText(newText) {
+                const oldText = this.el.innerText;
+                const length = Math.max(oldText.length, newText.length);
+                const promise = new Promise((resolve) => (this.resolve = resolve));
+                this.queue = [];
+                for (let i = 0; i < length; i++) {
+                    const from = oldText[i] || '';
+                    const to = newText[i] || '';
+                    const start = Math.floor(Math.random() * 40);
+                    const end = start + Math.floor(Math.random() * 40);
+                    this.queue.push({ from, to, start, end });
+                }
+                cancelAnimationFrame(this.frameRequest);
+                this.frame = 0;
+                this.update();
+                return promise;
+            }
+            update() {
+                let output = '';
+                let complete = 0;
+                for (let i = 0, n = this.queue.length; i < n; i++) {
+                    let { from, to, start, end, char } = this.queue[i];
+                    if (this.frame >= end) {
+                        complete++;
+                        output += to;
+                    } else if (this.frame >= start) {
+                        if (!char || Math.random() < 0.28) {
+                            char = this.chars[Math.floor(Math.random() * this.chars.length)];
+                            this.queue[i].char = char;
+                        }
+                        output += '<span style="opacity:.7">' + char + '</span>';
+                    } else {
+                        output += from;
+                    }
+                }
+                this.el.innerHTML = output;
+                if (complete === this.queue.length) {
+                    this.resolve();
+                } else {
+                    this.frameRequest = requestAnimationFrame(this.update);
+                    this.frame++;
+                }
+            }
+        }
+
+        const scrambleEl = document.querySelector('.scramble');
+        if (scrambleEl) {
+            const fx = new TextScramble(scrambleEl);
+            const words = ['GEN Z', 'KREATIF', 'INOVATIF', 'BERKARYA'];
+            let idx = 0;
+            const runScramble = () => {
+                idx = (idx + 1) % words.length;
+                fx.setText(words[idx]).then(() => {
+                    setTimeout(runScramble, 2600);
+                });
+            };
+            setTimeout(runScramble, 1400);
+        }
+
+        /* ============ COUNTER ANIMATION ============ */
+        const counters = document.querySelectorAll('[data-count]');
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                const el = entry.target;
+                const target = parseInt(el.dataset.count, 10);
+                const suffix = el.dataset.suffix || '';
+                const duration = 1600;
+                const startTime = performance.now();
+
+                function tick(now) {
+                    const progress = Math.min((now - startTime) / duration, 1);
+                    const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+                    const value = Math.floor(eased * target);
+                    el.textContent = value + suffix;
+                    if (progress < 1) requestAnimationFrame(tick);
+                    else el.textContent = target + suffix;
+                }
+                requestAnimationFrame(tick);
+                counterObserver.unobserve(el);
+            });
+        }, { threshold: 0.5 });
+        counters.forEach(c => counterObserver.observe(c));
+
+        /* ============ 3D TILT ============ */
+        const tiltEls = document.querySelectorAll('.tilt');
+        const tiltEnabled = !isTouch && window.matchMedia('(hover: hover)').matches;
+        if (tiltEnabled) {
+            tiltEls.forEach(el => {
+                el.style.transformStyle = 'preserve-3d';
+                el.addEventListener('mousemove', (e) => {
+                    const rect = el.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = ((y - centerY) / centerY) * -6;
+                    const rotateY = ((x - centerX) / centerX) * 6;
+                    el.style.transform = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translate(-4px, -4px)`;
+                });
+                el.addEventListener('mouseleave', () => {
+                    el.style.transform = '';
+                });
+            });
+        }
+
+        /* ============ BACK TO TOP ============ */
+        const backTop = document.getElementById('backTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) backTop.classList.add('show');
+            else backTop.classList.remove('show');
+        }, { passive: true });
+        backTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        /* ============ MOBILE MENU ============ */
+        const navToggle = document.getElementById('navToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuBackdrop = document.getElementById('menuBackdrop');
+        const menuClose = document.getElementById('menuClose');
+
+        function openMenu() {
+            mobileMenu.classList.add('open');
+            menuBackdrop.classList.add('open');
+            navToggle.setAttribute('aria-expanded', 'true');
+            mobileMenu.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeMenu() {
+            mobileMenu.classList.remove('open');
+            menuBackdrop.classList.remove('open');
+            navToggle.setAttribute('aria-expanded', 'false');
+            mobileMenu.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+        if (navToggle) {
+            navToggle.addEventListener('click', openMenu);
+            menuClose.addEventListener('click', closeMenu);
+            menuBackdrop.addEventListener('click', closeMenu);
+            mobileMenu.querySelectorAll('a[href^="#"]').forEach(a => {
+                a.addEventListener('click', closeMenu);
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeMenu();
+            });
+        }
+
+        /* ============ SMOOTH ANCHOR SCROLL (offset navbar) ============ */
+        document.querySelectorAll('a[href^="#"]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                const id = link.getAttribute('href');
+                if (id === '#' || id.length < 2) return;
+                const target = document.querySelector(id);
+                if (!target) return;
+                e.preventDefault();
+                const navHeight = navbar.offsetHeight;
+                const top = target.getBoundingClientRect().top + window.scrollY - navHeight - 10;
+                window.scrollTo({ top, behavior: 'smooth' });
+            });
+        });
+    })();
+    </script>
+</body>
+</html>
